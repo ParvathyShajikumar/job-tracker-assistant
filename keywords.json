@@ -1,0 +1,32 @@
+{
+  "Applied": [
+    "application received",
+    "successfully submitted",
+    "thank you for applying",
+    "thank you for your interest",
+    "we'll review your application",
+    "excited to meet you",
+    "we are pleased to confirm"
+  ],
+  "Rejected": [
+    "regret to inform",
+    "not moving forward",
+    "unfortunately",
+    "cannot proceed",
+    "we will not be moving forward"
+  ],
+  "Interview": [
+    "invite you for interview",
+    "schedule interview",
+    "discussion with hiring team",
+    "shortlisted",
+    "we would like to invite you"
+  ],
+  "Offer": [
+    "delighted to offer",
+    "congratulations",
+    "selected for the position",
+    "offer letter",
+    "we are excited to offer you"
+  ]
+}
