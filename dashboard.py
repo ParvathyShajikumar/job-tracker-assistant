@@ -7,15 +7,6 @@ DB_NAME = "job_applications.db"
 
 def get_latest_applications():
     conn = sqlite3.connect(DB_NAME)
-    # query = """
-    # SELECT company, role, subject, date_applied, status, unique_key
-    # FROM applications
-    # WHERE rowid IN (
-    #     SELECT MAX(rowid)
-    #     FROM applications
-    #     GROUP BY unique_key
-    # )
-    # """
     query = """
     SELECT company, role, subject, date_applied, status, unique_key
     FROM applications
@@ -29,29 +20,26 @@ def get_latest_applications():
     conn.close()
     return df
 
-def load_data():
-    """Load job applications from SQLite into a DataFrame"""
-    conn = sqlite3.connect(DB_NAME)
-    df = pd.read_sql_query("SELECT * FROM applications", conn)
-    conn.close()
-    return df
-
 def main():
     # --- Custom Styling ---
     st.markdown(
         """
         <style>
         .main {
-            background-color: #f9f9f9;
+            background-color: #fdfdfd;
             font-family: 'Segoe UI', sans-serif;
         }
         h1 {
-            color: #2E86C1;
+            background: linear-gradient(90deg, #2E86C1, #A569BD);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .stMetric {
-            background: #EAF2F8;
-            border-radius: 10px;
-            padding: 10px;
+        div[data-testid="stMetric"] {
+            background-color: #EAF2F8;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
         }
         </style>
         """,
@@ -60,34 +48,29 @@ def main():
 
     # --- Branding Header ---
     st.title("🚀 Parvathy’s Job Tracker")
-    st.caption("Aspiring AI Automation Engineer | Certified Databricks & AWS")
+    st.caption("✨ Aspiring AI Automation Engineer | Certified Databricks & AWS")
 
     # --- Sidebar Profile ---
-    #st.sidebar.image("https://via.placeholder.com/150", caption="Parvathy", use_column_width=True)
+    st.sidebar.markdown("## 🌸 About Me")
     st.sidebar.image("https://via.placeholder.com/150", caption="Parvathy", use_container_width=True)
-
-    st.sidebar.markdown("**🌸 AI Automation Enthusiast**")
+    st.sidebar.markdown("**AI Automation Enthusiast**")
     st.sidebar.markdown("📍 Kerala, India")
-    st.sidebar.markdown("[LinkedIn](https://linkedin.com/in/yourprofile) | [GitHub](https://github.com/yourprofile)")
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("[🔗 LinkedIn](https://linkedin.com/in/yourprofile)")
+    st.sidebar.markdown("[💻 GitHub](https://github.com/yourprofile)")
 
     # --- Load Data ---
     df = get_latest_applications()
-
     if df.empty:
         st.warning("No job applications found yet. Run email_reader.py to add some!")
         return
 
     # --- KPI Metrics ---
     st.subheader("✨ Key Metrics")
-    # total_apps = len(df)
-    # interviews = (df["status"] == "Interview").sum()
-    # offers = (df["status"] == "Offer").sum()
-    # rejections = (df["status"] == "Rejected").sum()
-    total_apps = len(df)
+    applied = len(df[df['status'] == 'Applied'])
     interviews = len(df[df['status'] == 'Interview'])
     offers = len(df[df['status'] == 'Offer'])
     rejections = len(df[df['status'] == 'Rejected'])
-    applied = len(df[df['status'] == 'Applied'])
 
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("💼 Applied", applied)
@@ -122,7 +105,7 @@ def main():
         mime="text/csv",
     )
 
-    # --- Applications by Status ---
+    # --- Applications by Status (Bar + Pie) ---
     st.subheader("📈 Applications by Status")
     status_counts = filtered_df["status"].value_counts()
     fig_status = px.bar(
@@ -134,6 +117,15 @@ def main():
         color=status_counts.index
     )
     st.plotly_chart(fig_status)
+
+    st.subheader("📊 Status Distribution")
+    fig_pie = px.pie(
+        filtered_df,
+        names="status",
+        title="Applications Status Breakdown",
+        color="status"
+    )
+    st.plotly_chart(fig_pie)
 
     # --- Applications Over Time ---
     st.subheader("⏳ Applications Over Time")
